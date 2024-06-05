@@ -303,7 +303,128 @@ Future<bool> _requestStoragePermission() async {
   return status.isGranted;
 }
 
+class DarkColorPicker extends StatefulWidget {
+  final Color pickerColor;
+  final ValueChanged<Color> onColorChanged;
 
+  DarkColorPicker({required this.pickerColor, required this.onColorChanged});
+
+  @override
+  _DarkColorPickerState createState() => _DarkColorPickerState();
+}
+
+class _DarkColorPickerState extends State<DarkColorPicker> {
+  Color _currentColor;
+
+  _DarkColorPickerState() : _currentColor = Colors.black;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentColor = widget.pickerColor;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ColorPicker(
+      pickerColor: _currentColor,
+      onColorChanged: (color) {
+        final hslColor = HSLColor.fromColor(color);
+        if (hslColor.lightness < 0.5) { // Only allow dark colors
+          setState(() {
+            _currentColor = color;
+            widget.onColorChanged(color);
+          });
+        }
+      },
+      enableAlpha: false,
+      showLabel: false,
+      pickerAreaHeightPercent: 0.8,
+    );
+  }
+}
+
+// Page templates
+class PageTemplate extends StatelessWidget {
+  final String title;
+
+  PageTemplate({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorProvider = Provider.of<ColorProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title, style: TextStyle(color: colorProvider.secondaryColor)),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(title),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Back to Home'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PageOne extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PageTemplate(title: 'Page One');
+  }
+}
+
+class PageTwo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PageTemplate(title: 'Page Two');
+  }
+}
+
+class PageThree extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PageTemplate(title: 'Page Three');
+  }
+}
+
+class PageFour extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PageTemplate(title: 'Page Four');
+  }
+}
+
+class PageFive extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PageTemplate(title: 'Page Five');
+  }
+}
+Explanation:
+DarkColorPicker Widget: A custom color picker widget DarkColorPicker is created to limit the selection to dark colors. It checks the lightness of the selected color and only allows colors with lightness below 0.5.
+MyDrawer Update: The MyDrawer widget uses the DarkColorPicker instead of the standard ColorPicker.
+State Management: The _DarkColorPickerState ensures that only dark colors are picked and updates the ColorProvider accordingly.
+This setup ensures that users can only pick dark colors for the primary color, and it dynamically sets a matching secondary color based on the chosen primary color.
+
+
+
+
+
+
+
+
+
+ChatGPT can make mistakes. Check important
 
 
 
